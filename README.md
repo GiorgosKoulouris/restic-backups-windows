@@ -1,11 +1,29 @@
 # Restic Windows Server Backup
 
 Encrypted, scheduled backups of Windows servers to Amazon S3, built on [restic](https://restic.net).
-One bucket for all servers, one repository per server, one PowerShell tool to set up, monitor and restore.
+One bucket for all servers, one repository per server.
+
+**A point-and-click app for restic.** One window to configure, back up, browse snapshots, restore and check health, with no command line and no restic knowledge needed. Settings is a form with validation. Restores let you pick folders and files from a tree.
+
+## Try it
+
+Download the installer and run it on a test server (it asks for administrator rights):
+
+**[Install-Restic.bat](https://tcop-tools.s3.eu-central-1.amazonaws.com/ResticBackups/Windows/Install-Restic.bat)**
+
+Or from an elevated PowerShell:
+
+```
+Invoke-WebRequest https://tcop-tools.s3.eu-central-1.amazonaws.com/ResticBackups/Windows/Install-Restic.bat -OutFile $env:USERPROFILE\Downloads\Install-Restic.bat
+& $env:USERPROFILE\Downloads\Install-Restic.bat
+```
+
+Accept the default folder, then open `Restic-ManageSnapshots.bat` there. Settings opens and walks you through the rest. You need a bucket and AWS keys first, see [Quick start](#quick-start).
 
 ## Why
 
-- **One tool per server, nothing else to install.** A single PowerShell script with a desktop window and a console menu. No agents, no services, no external modules.
+- **A GUI, not a script to learn.** Everything runs from a desktop window: settings, backups, snapshots, restores, retention, maintenance. A console menu with the same functions covers servers without a desktop.
+- **One tool per server, nothing else to install.** A single PowerShell script. No agents, no services, no external modules.
 - **Isolated servers.** Each server writes to its own repository (`<bucket>/<COMPUTERNAME>`) with its own AWS keys. A compromised server can't touch the others' backups.
 - **Encrypted end to end.** restic encrypts everything before upload. Secrets are stored on the server with machine-bound DPAPI, never in the configuration file.
 - **Hands-off.** A daily scheduled task backs up all jobs, then applies retention, prunes and checks the repository on the schedule you set.
@@ -37,7 +55,7 @@ One bucket for all servers, one repository per server, one PowerShell tool to se
 
 1. **Create the bucket.** One for all servers. Keep "Block all public access" on.
 2. **Create an IAM user per server.** Restrict it to `BUCKET/<COMPUTERNAME>/*`. The exact policy is in the user guide.
-3. **Install.** Download `Install-Restic.bat` from your distribution folder and run it. The default folder is `C:\Program Files\Restic`.
+3. **Install.** Download [`Install-Restic.bat`](https://tcop-tools.s3.eu-central-1.amazonaws.com/ResticBackups/Windows/Install-Restic.bat) and run it. The default folder is `C:\Program Files\Restic`.
 4. **Configure.** Run `Restic-ManageSnapshots.bat`. Settings opens on first launch: enter the AWS region, bucket, AWS keys and restic password, then add your backup jobs.
 5. **Run Setup.** It installs restic, stores the secrets, creates the repository and registers the scheduled task.
 
@@ -45,7 +63,7 @@ Store the restic password outside the server. Without it, the backups can't be r
 
 ## Everyday use
 
-Open `Restic-ManageSnapshots.bat`. The main window shows the health of the configuration, the repository and the scheduled task, and the newest snapshot of each job.
+Open `Restic-ManageSnapshots.bat`. Everything below is a button in the main window. The window shows the health of the configuration, the repository and the scheduled task, and the newest snapshot of each job.
 
 | Action | Purpose |
 |---|---|
