@@ -1,0 +1,6 @@
+/dist/
+.claude/
+CLAUDE.md
+ResticTools/restic-config.json
+ResticTools/restic-config.json.bak
+dev/publish.local.cmd
